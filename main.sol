@@ -1,4 +1,4 @@
-contract deductible_backing_car_collision {
+contract ethic_main {
 
   /**
    *   The structs.
