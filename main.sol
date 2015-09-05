@@ -38,11 +38,10 @@ contract deductible_backing_car_collision {
     uint amount_contributed;
     uint joining_date;
     // if he has two cars
-    uint nb_of_policies; // FIXME: redundant with member_policies array
-    // FIXME: https://github.com/ethereum/wiki/wiki/Solidity-Tutorial#arrays
+    uint nb_of_policies;
     // FIXME: rename attribute?
     mapping (uint => Claim) personal_legacy;
-    Policy[] member_policies;
+    mapping (uint => Policy) member_policies;
     // this is how much token he has, token being our cryptocurrency
     uint token_balance;
     // we create the member but he has to be accepted,
@@ -116,8 +115,10 @@ contract deductible_backing_car_collision {
 
   function add_policy(uint car_year, string car_model, uint old_premium, uint old_deductible) {
     var member = members_by_address[msg.sender];
-    member.member_policies[member.member_policies.length] = Policy({
-      policy_id: member_policies.length,  // FIXME: maybe we want a more global ID ?
+    var member_policies = member.member_policies;
+    var policy_id = member.nb_of_policies;
+    member_policies[policy_id] = Policy({
+      policy_id: policy_id,  // FIXME: maybe we want a more global ID ?
       year: car_year,
       model: car_model,
       initial_premium: old_premium,
