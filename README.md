@@ -6,7 +6,11 @@ This repository contains contracts for Ethic.
 
 ### Ethereum installation
 
-- `brew install cpp-ethereum --with-gui --devel --successful`
+This assumes that you have [brew](http://brew.sh/) installed:
+```bash
+$ brew tap ethereum/ethereum
+$ brew install ethereum --devel
+```
 
 ### Configuration
 
