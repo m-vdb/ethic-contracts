@@ -28,6 +28,6 @@ Once done, you can start mining:
 $ ./bin/run.sh --mine
 ```
 
-## Building
+## Building the contract
 
 Simply call `make` in the repository folder and it will build the opcodes.
