@@ -5,6 +5,7 @@ contract ethic_main {
    *   See https://github.com/ethereum/wiki/wiki/Solidity-Tutorial#structs
    */
 
+  // TODO: policy type + params
   struct Policy {
     uint policy_id;
     uint year;
@@ -172,6 +173,7 @@ contract ethic_main {
    * and the amount to send
    */
 
+  // TODO: add policy type as argument
   function send_tokens(address claimer, uint amount) {
     // FIXME: define constant https://github.com/ethereum/wiki/wiki/Solidity-Tutorial#constants
     var adjusted_amount = amount - 250;
@@ -184,6 +186,9 @@ contract ethic_main {
     // each member of the DAO receives
     for (uint i = 0 ; i < nb_members + 1 ; i++) {
       Member contributor = members_by_id[i];
+      // TODO: the filtering is made among the members that own the
+      // same type of policy (California, car, deductible 2500)
+      // FIXME: contributor != claimer
       if (contributor.admitted = true){
         // nb_admitted_members so we don't charge people who are waiting to be accepted into the DAO
         // -> @leo: you assume here that if a member has two policies, he weighs twice a member that has one?
