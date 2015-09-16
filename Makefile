@@ -5,10 +5,10 @@ endif
 MAIN_SOL = ./main.sol
 BUILD_DIR = ./build
 MAIN_CONTRACT = ethic_main
-OUTPUT_FILE = ${MAIN_CONTRACT}.opcode
+OUTPUT_FILE = ${MAIN_CONTRACT}.binary
 
 all:
-	solc ${MAIN_SOL} --opcodes file
+	solc ${MAIN_SOL} --binary file
 	mv ${OUTPUT_FILE} ${BUILD_DIR}
 	echo 'Builded file in ${BUILD_DIR}/${OUTPUT_FILE}'
 
