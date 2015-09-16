@@ -5,12 +5,20 @@ endif
 MAIN_SOL = ./main.sol
 BUILD_DIR = ./build
 MAIN_CONTRACT = ethic_main
-OUTPUT_FILE = ${MAIN_CONTRACT}.binary
+BINARY_FILE = ${MAIN_CONTRACT}.binary
+ABI_FILE = ${MAIN_CONTRACT}.abi
 
-all:
+all: binary abi
+
+binary:
 	solc ${MAIN_SOL} --binary file
-	mv ${OUTPUT_FILE} ${BUILD_DIR}
-	echo 'Builded file in ${BUILD_DIR}/${OUTPUT_FILE}'
+	mv ${BINARY_FILE} ${BUILD_DIR}
+	echo 'Builded file in ${BUILD_DIR}/${BINARY_FILE}'
+
+abi:
+	solc ${MAIN_SOL} --json-abi file
+	mv ${ABI_FILE} ${BUILD_DIR}
+	echo 'Builded file in ${BUILD_DIR}/${ABI_FILE}'
 
 install:
 	cp config/env.tpl config/env
