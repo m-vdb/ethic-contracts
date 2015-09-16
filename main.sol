@@ -35,7 +35,6 @@ contract ethic_main {
   	// is not always the address we registered, maybe we should pass 
   	// back logged_address all the time
     address beneficiary;
-    string name;
     uint amount_contributed;
     uint joining_date;
     // if he has two cars
@@ -82,13 +81,12 @@ contract ethic_main {
    * values.
    */
 
-  function create_member(string name) {
+  function create_member() {
 
     var account = msg.sender;
     // FIXME: we need to check if the account exists
     members_by_address[account] = Member({
       beneficiary: account,
-      name: name,  // TODO: we'll see if we need this
       amount_contributed: 0,
       joining_date: block.timestamp,  // we date his joining the DAO on the day of the current block
       nb_of_policies: 0, // FIXME: check default value 'if this is too heavy just set to 1 by default'
