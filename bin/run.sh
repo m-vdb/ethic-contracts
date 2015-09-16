@@ -3,6 +3,7 @@ ROOT_DIR=`readlink -f "$(dirname "$(dirname "$0")")" 2> /dev/null` || ROOT_DIR=`
 DATADIR=~/.ethereum/test-datachain
 GENESIS=$ROOT_DIR/config/genesis.json
 ENV_FILE=$ROOT_DIR/config/env
+LOG_FILE=$ROOT_DIR/logs/mining.log
 
 # options
 MINE=
@@ -25,4 +26,4 @@ while [[ $# > 0 ]]; do
   shift # past argument or value
 done
 
-. $ENV_FILE && geth --networkid=$NETWORK_ID --rpc --maxpeers=0 --genesis=$GENESIS --datadir=$DATADIR $MINE $CONSOLE
+. $ENV_FILE && geth --networkid=$NETWORK_ID --rpc --maxpeers=0 --genesis=$GENESIS --datadir=$DATADIR $MINE $CONSOLE 2> $LOG_FILE
