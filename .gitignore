@@ -1,4 +1,6 @@
 build/*
 !build/.keep
+logs/*
+!logs/.keep
 config/genesis.json
 config/env
