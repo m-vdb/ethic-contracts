@@ -5,25 +5,26 @@ contract ethic_main {
    *   See https://github.com/ethereum/wiki/wiki/Solidity-Tutorial#structs
    */
 
-  // TODO: policy type + params
   struct Policy {
-    uint policy_id;
-    uint year;
-    string model;
-    uint initial_premium;
-    uint initial_deductible;
+    uint id;
+    uint car_year;
+    string car_make;
+    string car_model;
+    string state;  // CA, WA, LA, ...
+    uint initial_premium;  // stored in cents
+    uint initial_deductible;  // stored in cents
     // TODO: find how to register dates, probably in seconds since...
-    uint registered_date;
+    uint registered_at;
   }
 
 
   struct Claim {
-    uint claim_id;
+    uint id;
     address claimer;
-    uint amount;
+    uint amount;  // stored in cents
     // TODO: find how to register dates, probably in seconds since...
-    uint filing_date;
-    uint nb_of_validations;
+    uint filed_at;
+    uint nb_of_validations;  // FIXME: what is it for?
     bool awarded;
     bool paid;
     uint agreed_amount;
@@ -112,17 +113,19 @@ contract ethic_main {
    * Add a policy to a member (the sender)
    */
 
-  function add_policy(uint car_year, string car_model, uint old_premium, uint old_deductible) {
+  function add_policy(uint car_year, string car_make, string car_model, uint old_premium, uint old_deductible) {
     var member = members_by_address[msg.sender];
     var member_policies = member.member_policies;
     var policy_id = member.nb_of_policies;
     member_policies[policy_id] = Policy({
-      policy_id: policy_id,  // FIXME: maybe we want a more global ID ?
-      year: car_year,
-      model: car_model,
+      id: policy_id,  // FIXME: maybe we want a more global ID ?
+      car_year: car_year,
+      car_make: car_make,
+      car_model: car_model,
+      state: "CA",  // this is hardcoded for now
       initial_premium: old_premium,
       initial_deductible: old_deductible,
-      registered_date: block.timestamp
+      registered_at: block.timestamp
     });
     member.nb_of_policies++;
   }
@@ -137,10 +140,10 @@ contract ethic_main {
   function claim(uint amount_claimed) {
 
     claims_ledger[claims_ledger.length] = Claim({
-      claim_id: claims_ledger.length,
+      id: claims_ledger.length,
       claimer: msg.sender,
       amount: amount_claimed,
-      filing_date: block.timestamp,
+      filed_at: block.timestamp,
       nb_of_validations: 0,
       awarded: false,
       paid: false,
