@@ -214,6 +214,7 @@ contract ethic_main {
     while (address(this).balance > claims_ledger[i].agreed_amount && i < claims_ledger.length) {
       claims_ledger[i].claimer.send(claims_ledger[i].agreed_amount);
       i++;
+      // TODO: we want to set the "paid" attribute to true
     }
   }
 
