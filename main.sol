@@ -55,9 +55,9 @@ contract ethic_main {
    */
 
   uint id_of_last_claim_settled;  // this is for payments
-  // FIXME: find out which storage is better
-  mapping (uint => Member) members_by_id;
-  mapping (address => Member) members_by_address;
+
+  mapping (uint => address) members_addresses;  // FIXME: we need this because we cant iterate over mapping
+  mapping (address => Member) members;
   // will hold the claims
   Claim[] claims_ledger;
   // FIXME: maybe we don't need it, and use a function instead
@@ -101,7 +101,7 @@ contract ethic_main {
    */
 
   function admit_member(address admitted_address) {
-    members_by_address[admitted_address].admitted = true;
+    members[admitted_address].admitted = true;
     nb_admitted_members++;
   }
 
@@ -178,11 +178,12 @@ contract ethic_main {
     // if he has claimed more than once he only receives a part of the amount,
     // and only a part of the amount is deducted from the organization's accounts
     // -> @leo what did you mean?
-    members_by_address[claimer].token_balance += adjusted_amount;
+    members[claimer].token_balance += adjusted_amount;
 
     // each member of the DAO receives
-    for (uint i = 0 ; i < nb_members + 1 ; i++) {
-      Member contributor = members_by_id[i];
+    for (uint i = 0 ; i < members_addresses.length + 1 ; i++) {
+      address member_address = members_addresses[i];
+      Member contributor = members[member_address];
       // TODO: the filtering is made among the members that own the
       // same type of policy (California, car, deductible 2500)
       // FIXME: contributor != claimer
@@ -221,7 +222,7 @@ contract ethic_main {
 
   function reset_token_balance(address where_to_reset, uint by_how_much) {
     // FIXME: where_to_reset == msg.sender ? how do we call this method
-    members_by_address[where_to_reset].token_balance -= by_how_much;
+    members[where_to_reset].token_balance -= by_how_much;
   }
 
 }
