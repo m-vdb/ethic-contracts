@@ -35,9 +35,9 @@ contract ethic_main {
   	// TODO: see how we manage the fact that the sender of the message
   	// is not always the address we registered, maybe we should pass 
   	// back logged_address all the time
-    address beneficiary;
+    address id;
     uint amount_contributed;
-    uint joining_date;
+    uint created_at;
     // if he has two cars
     uint nb_of_policies; // FIXE: not sure we need it
     mapping (uint => Policy) policies;
@@ -78,14 +78,13 @@ contract ethic_main {
    * values.
    */
 
-  function create_member() {
+  function create_member(address addr) { // TODO check if this can be of type address
 
-    var account = msg.sender;
-    // FIXME: we need to check if the account exists
-    members_by_address[account] = Member({
-      beneficiary: account,
+    // FIXME: we need to check if the member exists
+    members[addr] = Member({
+      id: addr,
       amount_contributed: 0,
-      joining_date: block.timestamp,  // we date his joining the DAO on the day of the current block
+      created_at: block.timestamp,  // we date his joining the DAO on the day of the current block
       nb_of_policies: 0, // FIXME: check default value 'if this is too heavy just set to 1 by default'
       token_balance: 0,
       admitted: false  // when he registers he is not admitted yet
