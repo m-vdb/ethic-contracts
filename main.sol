@@ -54,8 +54,6 @@ contract ethic_main {
    *   See https://github.com/ethereum/wiki/wiki/Solidity-Tutorial#data-location
    */
 
-  // FIXME: redundant with storage type
-  uint nb_members;
   uint id_of_last_claim_settled;  // this is for payments
   // FIXME: find out which storage is better
   mapping (uint => Member) members_by_id;
