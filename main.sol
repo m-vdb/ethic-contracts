@@ -39,15 +39,13 @@ contract ethic_main {
     uint amount_contributed;
     uint joining_date;
     // if he has two cars
-    uint nb_of_policies;
-    // FIXME: rename attribute?
-    mapping (uint => Claim) personal_legacy;
-    mapping (uint => Policy) member_policies;
+    uint nb_of_policies; // FIXE: not sure we need it
+    mapping (uint => Policy) policies;
     // this is how much token he has, token being our cryptocurrency
     uint token_balance;
     // we create the member but he has to be accepted,
     // first by us, in time by his peers
-    bool admitted;
+    bool admitted;  // FIXME remove this
   }
 
 
@@ -114,8 +112,8 @@ contract ethic_main {
    */
 
   function add_policy(uint car_year, string car_make, string car_model, uint old_premium, uint old_deductible) {
-    var member = members_by_address[msg.sender];
-    var member_policies = member.member_policies;
+    var member = members[msg.sender];
+    var member_policies = member.policies;
     var policy_id = member.nb_of_policies;
     member_policies[policy_id] = Policy({
       id: policy_id,  // FIXME: maybe we want a more global ID ?
