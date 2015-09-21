@@ -181,11 +181,11 @@ contract ethic_main {
       Member contributor = members[member_address];
       // TODO?: the filtering is made among the members that own the
       // same type of policy (California, car, deductible 2500)
-      // FIXME: contributor != claimer
-      if (stringsEqual(contributor.state, "active")){
+      if (stringsEqual(contributor.state, "active") && contributor.id != claimer){
         // active_members so we don't charge people who are waiting to be accepted into the DAO
         // -> @leo: you assume here that if a member has two policies, he weighs twice a member that has one?
-        contributor.token_balance -= adjusted_amount / active_members * contributor.nb_of_policies;
+        // active_members - 1, 1 being the claimer
+        contributor.token_balance -= adjusted_amount / (active_members - 1) * contributor.nb_of_policies;
       }
     }
   }
