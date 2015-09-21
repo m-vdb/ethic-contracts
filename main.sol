@@ -55,7 +55,7 @@ contract ethic_main {
 
   uint id_of_last_claim_settled;  // this is for payments
 
-  mapping (uint => address) members_addresses;  // FIXME: we need this because we cant iterate over mapping
+  address[] members_addresses;  // FIXME: we need this because we cant iterate over mapping
   mapping (address => Member) members;
   // will hold the claims
   Claim[] claims_ledger;
