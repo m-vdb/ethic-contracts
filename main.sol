@@ -59,8 +59,7 @@ contract ethic_main {
   mapping (address => Member) members;
   // will hold the claims
   Claim[] claims_ledger;
-  // FIXME: maybe we don't need it, and use a function instead
-  // this is just to avoid charging people who have not yet been admitted into the DAO
+  // useful to count only active members when charging people
   uint active_members;
   uint nb_registered_policies;
 
@@ -180,10 +179,10 @@ contract ethic_main {
     for (uint i = 0 ; i < members_addresses.length + 1 ; i++) {
       address member_address = members_addresses[i];
       Member contributor = members[member_address];
-      // TODO: the filtering is made among the members that own the
+      // TODO?: the filtering is made among the members that own the
       // same type of policy (California, car, deductible 2500)
       // FIXME: contributor != claimer
-      if (contributor.admitted = true){
+      if (stringsEqual(contributor.state, "active")){
         // active_members so we don't charge people who are waiting to be accepted into the DAO
         // -> @leo: you assume here that if a member has two policies, he weighs twice a member that has one?
         contributor.token_balance -= adjusted_amount / active_members * contributor.nb_of_policies;
@@ -221,4 +220,22 @@ contract ethic_main {
     members[where_to_reset].token_balance -= by_how_much;
   }
 
+
+  /**
+   *   Utils methods
+   */
+
+  function stringsEqual(string storage _a, string memory _b) internal returns (bool) {
+    bytes storage a = bytes(_a);
+    bytes memory b = bytes(_b);
+
+    if (a.length != b.length)
+      return false;
+
+    for (uint i = 0; i < a.length; i++) {
+      if (a[i] != b[i])
+        return false;
+    }
+    return true;
+  }
 }
