@@ -43,9 +43,8 @@ contract ethic_main {
     mapping (uint => Policy) policies;
     // this is how much token he has, token being our cryptocurrency
     uint token_balance;
-    // we create the member but he has to be accepted,
-    // first by us, in time by his peers
-    bool admitted;  // FIXME remove this
+    // holds the state of the member: active/inactive
+    string state;
   }
 
 
@@ -62,7 +61,7 @@ contract ethic_main {
   Claim[] claims_ledger;
   // FIXME: maybe we don't need it, and use a function instead
   // this is just to avoid charging people who have not yet been admitted into the DAO
-  uint nb_admitted_members;
+  uint active_members;
   uint nb_registered_policies;
 
   /**
@@ -87,21 +86,19 @@ contract ethic_main {
       created_at: block.timestamp,  // we date his joining the DAO on the day of the current block
       nb_of_policies: 0, // FIXME: check default value 'if this is too heavy just set to 1 by default'
       token_balance: 0,
-      admitted: false  // when he registers he is not admitted yet
+      state: 'active'
     });
+    active_members++;
   }
 
   /**
-   * Admit a member
-   * In the first place, this function should actually only
-   * be called by us, once we've done the background check.
-   * Maybe later we will have peers invite their friends
-   * making this process easier.
+   * Deactivate a member. In case the member wants to
+   * remove his account or is dormant.
    */
 
-  function admit_member(address admitted_address) {
-    members[admitted_address].admitted = true;
-    nb_admitted_members++;
+  function deactivate_member(address member_address) {
+    members[member_address].state = 'inactive';
+    active_members--;
   }
 
   /**
@@ -187,9 +184,9 @@ contract ethic_main {
       // same type of policy (California, car, deductible 2500)
       // FIXME: contributor != claimer
       if (contributor.admitted = true){
-        // nb_admitted_members so we don't charge people who are waiting to be accepted into the DAO
+        // active_members so we don't charge people who are waiting to be accepted into the DAO
         // -> @leo: you assume here that if a member has two policies, he weighs twice a member that has one?
-        contributor.token_balance -= adjusted_amount / nb_admitted_members * contributor.nb_of_policies;
+        contributor.token_balance -= adjusted_amount / active_members * contributor.nb_of_policies;
       }
     }
   }
