@@ -129,10 +129,11 @@ contract ethic_main {
    * as argument, for several policies (cars, home, etc...).
    */
 
-  function claim(uint amount_claimed) {
+  function claim(uint amount_claimed) returns (uint) {
 
-    claims_ledger[claims_ledger.length] = Claim({
-      id: claims_ledger.length,
+    uint claim_id = claims_ledger.length;
+    claims_ledger[claim_id] = Claim({
+      id: claim_id,
       claimer: msg.sender,
       amount: amount_claimed,
       filed_at: block.timestamp,
@@ -141,6 +142,7 @@ contract ethic_main {
       paid: false,
       agreed_amount: 0
     });
+    return claim_id;
   }
 
   /**
