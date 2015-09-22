@@ -4,3 +4,4 @@ logs/*
 !logs/.keep
 config/genesis.json
 config/env
+node_modules/*
