@@ -27,4 +27,6 @@ while [[ $# > 0 ]]; do
   shift # past argument or value
 done
 
-. $ENV_FILE && geth --networkid=$NETWORK_ID --rpc --rpcapi=$RPCAPI --maxpeers=0 --genesis=$GENESIS --datadir=$DATADIR --unlock=0 $MINE $CONSOLE 2> $LOG_FILE
+. $ENV_FILE &&
+geth --networkid=$NETWORK_ID --rpc --rpcapi=$RPCAPI --maxpeers=0 --gpomin "10000" \
+     --genesis=$GENESIS --datadir=$DATADIR --unlock=0 $MINE $CONSOLE 2> $LOG_FILE
