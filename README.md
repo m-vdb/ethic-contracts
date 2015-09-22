@@ -12,12 +12,21 @@ $ brew tap ethereum/ethereum
 $ brew install ethereum --devel
 ```
 
+### Repository installation
+
+This repository relies on nodeJS and gulp. You just need to do the following:
+```bash
+$ npm install -g gulp
+$ npm install .
+```
+
+
 ### Configuration
 
 In the `bin/` folder you'll find a number of scripts. Each of them rely on configuration files,
 that you can find in the `config/` folder. You can generate the config files from the templates using:
 ```bash
-$ make install
+$ gulp install
 ```
 Then, edit `config/env` and provide a networkid (used for `geth` as a test network).
 Once done, you can do the following:
@@ -34,4 +43,5 @@ $ ./bin/run.sh --mine
 
 ## Building the contract
 
-Simply call `make` in the repository folder and it will build the opcodes.
+Simply call `gulp` in the repository folder and it will build the contract configuration file (`contract.json`)
+and a javascript template (`create_contract.js`) that you can use to create the contract on the network.
