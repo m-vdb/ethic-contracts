@@ -104,7 +104,7 @@ contract ethic_main {
    * Add a policy to a member (the sender)
    */
 
-  function add_policy(uint car_year, string car_make, string car_model, uint old_premium, uint old_deductible) {
+  function add_policy(uint car_year, string car_make, string car_model, uint old_premium, uint old_deductible) returns (uint) {
     var member = members[msg.sender];
     var member_policies = member.policies;
     var policy_id = member.nb_of_policies;
@@ -119,6 +119,7 @@ contract ethic_main {
       registered_at: block.timestamp
     });
     member.nb_of_policies++;
+    return policy_id;
   }
 
   /**
