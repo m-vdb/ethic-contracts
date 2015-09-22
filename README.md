@@ -45,3 +45,9 @@ $ ./bin/run.sh --mine
 
 Simply call `gulp` in the repository folder and it will build the contract configuration file (`contract.json`)
 and a javascript template (`create_contract.js`) that you can use to create the contract on the network.
+
+To create the contract, you need to start the test server with both mining and console options:
+```bash
+$ ./bin/run.sh -c -m
+```
+That way, you can interact with it using the Javascript API, and mine at the same time. The transaction you create will be mined shortly after commit. You can see the result of the transaction in the logs (`logs/mining.log`).
