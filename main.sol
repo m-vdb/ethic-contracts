@@ -63,6 +63,13 @@ contract ethic_main {
   uint active_members;
   uint nb_registered_policies;
 
+  // contructor
+  function ethic_main() public {
+    id_of_last_claim_settled = 0;
+    active_members = 0;
+    nb_registered_policies = 0;
+  }
+
   /**
    *   The contract's functions.
    *   See https://github.com/ethereum/wiki/wiki/Solidity-Tutorial#data-location
