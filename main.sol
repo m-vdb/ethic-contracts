@@ -94,6 +94,7 @@ contract ethic_main {
       token_balance: 0,
       state: 'active'
     });
+    members_addresses[members_addresses.length] = addr;
     active_members++;
     return active_members;
   }
