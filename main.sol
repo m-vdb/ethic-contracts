@@ -83,7 +83,7 @@ contract ethic_main {
    * values.
    */
 
-  function create_member(address addr) { // TODO check if this can be of type address
+  function create_member(address addr) returns (uint256) { // TODO check if this can be of type address
 
     // FIXME: we need to check if the member exists
     members[addr] = Member({
@@ -95,6 +95,7 @@ contract ethic_main {
       state: 'active'
     });
     active_members++;
+    return active_members;
   }
 
   /**
