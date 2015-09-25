@@ -7,5 +7,7 @@ var contract = EthicContract.new({
   if (!e) {
     if (!c.address) console.log('Transaction hash ' + c.transactionHash);
     else console.log('Contract address ' + c.address);
+  } else {
+    console.log('Error: ' + e);
   }
 });
