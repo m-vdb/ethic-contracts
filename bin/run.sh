@@ -28,5 +28,5 @@ while [[ $# > 0 ]]; do
 done
 
 . $ENV_FILE &&
-geth --networkid=$NETWORK_ID --rpc --rpcapi=$RPCAPI --maxpeers=0 --gpomin "10000" \
+geth --networkid=$NETWORK_ID --rpc --rpcapi=$RPCAPI --maxpeers=0 --gasprice="50" \
      --genesis=$GENESIS --datadir=$DATADIR --unlock=0 $MINE $CONSOLE 2> $LOG_FILE
