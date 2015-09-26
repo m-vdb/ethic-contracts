@@ -36,7 +36,7 @@ gulp.task('build-contract', function (cb) {
 
 gulp.task('new-contract', ['build-contract'], function () {
   gulp.src(BUILD_DIR + CONTRACT)
-    .pipe(wrap({src: 'templates/create_contract.js'}, {gas: 700000}))
+    .pipe(wrap({src: 'templates/create_contract.js'}, {gas: 1000000}))
     .pipe(rename('create_contract.js'))
     .pipe(gulp.dest(BUILD_DIR));
 });
