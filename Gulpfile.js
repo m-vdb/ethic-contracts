@@ -1,4 +1,5 @@
-var exec = require('child_process').exec,
+var argv = require('yargs').argv,
+    exec = require('child_process').exec,
     gulp = require('gulp'),
     rename = require('gulp-rename'),
     wrap = require("gulp-wrap");
@@ -38,5 +39,12 @@ gulp.task('new-contract', ['build-contract'], function () {
   gulp.src(BUILD_DIR + CONTRACT)
     .pipe(wrap({src: 'templates/create_contract.js'}, {gas: 1000000}))
     .pipe(rename('create_contract.js'))
+    .pipe(gulp.dest(BUILD_DIR));
+});
+
+gulp.task('mongo-contract', ['build-contract'], function () {
+  gulp.src(BUILD_DIR + CONTRACT)
+    .pipe(wrap({src: 'templates/mongo_update.js'}, {address: argv.a}))
+    .pipe(rename('mongo_update.js'))
     .pipe(gulp.dest(BUILD_DIR));
 });
