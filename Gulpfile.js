@@ -20,6 +20,7 @@ gulp.task('install', function () {
   gulp.src(GENESIS_FILE_TPL)
     .pipe(rename(GENESIS_FILE))
     .pipe(gulp.dest('.'));
+  exec('touch ' + CONFIG_DIR + 'password');
 });
 
 gulp.task('default', ['new-contract']);
