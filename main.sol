@@ -36,15 +36,15 @@ contract ethic_main {
   	// is not always the address we registered, maybe we should pass 
   	// back logged_address all the time
     address id;
-    uint amount_contributed;
+    // holds the state of the member: active/inactive
+    string state;
     uint created_at;
+    uint amount_contributed;
+    // this is how much token he has, token being our cryptocurrency
+    uint token_balance;
     // if he has two cars
     uint nb_of_policies; // FIXE: not sure we need it
     mapping (uint => Policy) policies;
-    // this is how much token he has, token being our cryptocurrency
-    uint token_balance;
-    // holds the state of the member: active/inactive
-    string state;
   }
 
 
@@ -83,21 +83,14 @@ contract ethic_main {
    * values.
    */
 
-  function create_member(address addr) returns (uint256) { // TODO check if this can be of type address
+  function create_member(address addr) { // TODO check if this can be of type address
 
     // FIXME: we need to check if the member exists
-    members[addr] = Member({
-      id: addr,
-      amount_contributed: 0,
-      created_at: block.timestamp,  // we date his joining the DAO on the day of the current block
-      nb_of_policies: 0, // FIXME: check default value 'if this is too heavy just set to 1 by default'
-      token_balance: 0,
-      state: 'active'
-    });
-    members_addresses[members_addresses.length] = addr;
+    members[addr] = Member(addr, 'active', block.timestamp, 0, 0, 0);
+    // TODO: append to the members_addresses array
     active_members++;
-    return active_members;
   }
+
 
   /**
    * Deactivate a member. In case the member wants to
