@@ -5,6 +5,8 @@ contract ethic_main {
    *   See https://github.com/ethereum/wiki/wiki/Solidity-Tutorial#structs
    */
 
+  enum MemberState { Active, Inactive }
+
   struct Policy {
     uint id;
     uint car_year;
@@ -37,7 +39,7 @@ contract ethic_main {
   	// back logged_address all the time
     address id;
     // holds the state of the member: active/inactive
-    string state;
+    MemberState state;
     uint created_at;
     uint amount_contributed;
     // this is how much token he has, token being our cryptocurrency
@@ -83,10 +85,9 @@ contract ethic_main {
    * values.
    */
 
-  function create_member(address addr) { // TODO check if this can be of type address
-
+  function create_member(address addr) {
     // FIXME: we need to check if the member exists
-    members[addr] = Member(addr, 'active', block.timestamp, 0, 0, 0);
+    members[addr] = Member(addr, MemberState.Active, block.timestamp, 0, 0, 0);
     // TODO: append to the members_addresses array
     active_members++;
   }
@@ -98,7 +99,7 @@ contract ethic_main {
    */
 
   function deactivate_member(address member_address) {
-    members[member_address].state = 'inactive';
+    members[member_address].state = MemberState.Inactive;
     active_members--;
   }
 
@@ -186,7 +187,7 @@ contract ethic_main {
       Member contributor = members[member_address];
       // TODO?: the filtering is made among the members that own the
       // same type of policy (California, car, deductible 2500)
-      if (stringsEqual(contributor.state, "active") && contributor.id != claimer){
+      if (contributor.state == MemberState.Active && contributor.id != claimer){
         // active_members so we don't charge people who are waiting to be accepted into the DAO
         // -> @leo: you assume here that if a member has two policies, he weighs twice a member that has one?
         // active_members - 1, 1 being the claimer
@@ -223,24 +224,5 @@ contract ethic_main {
   function reset_token_balance(address where_to_reset, uint by_how_much) {
     // FIXME: where_to_reset == msg.sender ? how do we call this method
     members[where_to_reset].token_balance -= by_how_much;
-  }
-
-
-  /**
-   *   Utils methods
-   */
-
-  function stringsEqual(string storage _a, string memory _b) internal returns (bool) {
-    bytes storage a = bytes(_a);
-    bytes memory b = bytes(_b);
-
-    if (a.length != b.length)
-      return false;
-
-    for (uint i = 0; i < a.length; i++) {
-      if (a[i] != b[i])
-        return false;
-    }
-    return true;
   }
 }
