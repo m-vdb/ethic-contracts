@@ -62,13 +62,13 @@ contract ethic_main {
   // will hold the claims
   Claim[] claims_ledger;
   // useful to count only active members when charging people
-  uint public active_members;
+  uint public nb_active_members;
   uint nb_registered_policies;
 
   // contructor
   function ethic_main() public {
     id_of_last_claim_settled = 0;
-    active_members = 0;
+    nb_active_members = 0;
     nb_registered_policies = 0;
   }
 
@@ -89,7 +89,7 @@ contract ethic_main {
     // FIXME: we need to check if the member exists
     members[addr] = Member(addr, MemberState.Active, block.timestamp, 0, 0, 0);
     // TODO: append to the members_addresses array
-    active_members++;
+    nb_active_members++;
   }
 
 
@@ -100,7 +100,7 @@ contract ethic_main {
 
   function deactivate_member(address member_address) {
     members[member_address].state = MemberState.Inactive;
-    active_members--;
+    nb_active_members--;
   }
 
   /**
@@ -188,10 +188,10 @@ contract ethic_main {
       // TODO?: the filtering is made among the members that own the
       // same type of policy (California, car, deductible 2500)
       if (contributor.state == MemberState.Active && contributor.id != claimer){
-        // active_members so we don't charge people who are waiting to be accepted into the DAO
+        // nb_active_members so we don't charge people who are waiting to be accepted into the DAO
         // -> @leo: you assume here that if a member has two policies, he weighs twice a member that has one?
-        // active_members - 1, 1 being the claimer
-        contributor.token_balance -= adjusted_amount / (active_members - 1) * contributor.nb_of_policies;
+        // nb_active_members - 1, 1 being the claimer
+        contributor.token_balance -= adjusted_amount / (nb_active_members - 1) * contributor.nb_of_policies;
       }
     }
   }
