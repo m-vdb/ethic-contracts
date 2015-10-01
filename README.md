@@ -38,16 +38,23 @@ write it in the `config/genesis.json` file.
 
 Once done, you can start mining:
 ```bash
-$ ./bin/run.sh --mine
+$ ./bin/run.sh
 ```
 
-## Building the contract
+## Creating the contract
 
 Simply call `gulp` in the repository folder and it will build the contract configuration file (`contract.json`)
 and a javascript template (`create_contract.js`) that you can use to create the contract on the network.
 
-To create the contract, you need to start the test server with both mining and console options:
+To create the contract, you need to start geth with the following:
 ```bash
-$ ./bin/run.sh -c -m
+$ ./bin/run.sh
 ```
-That way, you can interact with it using the Javascript API, and mine at the same time. The transaction you create will be mined shortly after commit. You can see the result of the transaction in the logs (`logs/mining.log`).
+Copy-paste the builded javascript in `build/create_contract.js`. After contact is created, you get the contact address, that you can use to build another template `mongo_update.js` that will update the contract in database:
+```bash
+$ gulp mongo-contract -a <address>
+```
+And finally, to actually update the contract in MongoDB:
+```bash
+$ mongo ethic build/mongo_update.js
+```
