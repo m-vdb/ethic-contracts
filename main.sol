@@ -86,9 +86,10 @@ contract ethic_main {
    */
 
   function create_member(address addr) {
-    // FIXME: we need to check if the member exists
+    // TODO: if (members[addr].id == addr) throw;
     members[addr] = Member(addr, MemberState.Active, block.timestamp, 0, 0, 0);
-    // TODO: append to the members_addresses array
+    members_addresses.length++;
+    members_addresses[members_addresses.length - 1] = addr;
     nb_active_members++;
   }
 
