@@ -9,12 +9,12 @@ contract ethic_main {
 
   struct Policy {
     uint id;
-    uint car_year;
-    string car_make;
-    string car_model;
-    string state;  // CA, WA, LA, ...
-    uint initial_premium;  // stored in cents
-    uint initial_deductible;  // stored in cents
+    uint8 car_year;
+    bytes car_make;
+    bytes car_model;
+    bytes state;  // CA, WA, LA, ...
+    uint8 initial_premium;  // stored in cents
+    uint8 initial_deductible;  // stored in cents
     // TODO: find how to register dates, probably in seconds since...
     uint registered_at;
   }
