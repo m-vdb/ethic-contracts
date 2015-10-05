@@ -97,8 +97,8 @@ contract ethic_main {
    * remove his account or is dormant.
    */
 
-  function deactivate_member(address member_address) {
-    members[member_address].state = MemberState.Inactive;
+  function deactivate_member(address addr) {
+    members[addr].state = MemberState.Inactive;
     nb_active_members--;
   }
 
