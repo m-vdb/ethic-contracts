@@ -44,9 +44,6 @@ contract ethic_main {
     uint amount_contributed;
     // this is how much token he has, token being our cryptocurrency
     uint token_balance;
-    // if he has two cars
-    uint nb_of_policies; // FIXE: not sure we need it
-    mapping (uint => Policy) policies;
   }
 
 
@@ -59,6 +56,7 @@ contract ethic_main {
 
   address[] members_addresses;  // FIXME: we need this because we cant iterate over mapping
   mapping (address => Member) public members;
+  mapping (address => Policy[]) public policies;
   // will hold the claims
   Claim[] claims_ledger;
   // useful to count only active members when charging people
@@ -87,7 +85,7 @@ contract ethic_main {
 
   function create_member(address addr) {
     // TODO: if (members[addr].id == addr) throw;
-    members[addr] = Member(addr, MemberState.Active, block.timestamp, 0, 0, 0);
+    members[addr] = Member(addr, MemberState.Active, block.timestamp, 0, 0);
     members_addresses.length++;
     members_addresses[members_addresses.length - 1] = addr;
     nb_active_members++;
@@ -104,14 +102,19 @@ contract ethic_main {
     nb_active_members--;
   }
 
+  function get_number_of_policies(address addr) constant returns (uint){
+    return policies[addr].length;
+  }
+
   /**
    * Add a policy to a member (the sender)
    */
 
-  function add_policy(uint car_year, string car_make, string car_model, uint old_premium, uint old_deductible) returns (uint) {
-    var member = members[msg.sender];
-    var member_policies = member.policies;
-    var policy_id = member.nb_of_policies;
+  function add_policy(address addr, uint8 car_year, bytes car_make, bytes car_model, uint8 old_premium, uint8 old_deductible) {
+    var member = members[addr];
+    // TODO: if (member.id != addr) throw;
+    var member_policies = policies[addr];
+    var policy_id = member_policies.length;
     member_policies[policy_id] = Policy({
       id: policy_id,  // FIXME: maybe we want a more global ID ?
       car_year: car_year,
@@ -122,8 +125,6 @@ contract ethic_main {
       initial_deductible: old_deductible,
       registered_at: block.timestamp
     });
-    member.nb_of_policies++;
-    return policy_id;
   }
 
   /**
@@ -192,7 +193,7 @@ contract ethic_main {
         // nb_active_members so we don't charge people who are waiting to be accepted into the DAO
         // -> @leo: you assume here that if a member has two policies, he weighs twice a member that has one?
         // nb_active_members - 1, 1 being the claimer
-        contributor.token_balance -= adjusted_amount / (nb_active_members - 1) * contributor.nb_of_policies;
+        contributor.token_balance -= adjusted_amount / (nb_active_members - 1) * get_number_of_policies(contributor.id);
       }
     }
   }
