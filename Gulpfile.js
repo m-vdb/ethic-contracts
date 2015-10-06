@@ -27,7 +27,7 @@ gulp.task('default', ['new-contract']);
 
 
 gulp.task('build-contract', function (cb) {
-  var cmd = 'solc ' + MAIN_SOL + ' --combined-json binary,json-abi > ' + BUILD_DIR + CONTRACT;
+  var cmd = 'solc ' + MAIN_SOL + ' --combined-json bin,abi > ' + BUILD_DIR + CONTRACT;
   exec(cmd, function (err, stdout, stderr) {
     console.log(cmd);
     if (stdout) console.log(stdout);
