@@ -6,17 +6,29 @@ contract ethic_main {
    */
 
   enum MemberState { Active, Inactive }
+  enum USAState {
+    AL, AK, AS, AZ, AR, CA,
+    CO, CT, DE, DC, FM, FL,
+    GA, GU, HI, ID, IL, IN,
+    IA, KS, KY, LA, ME, MH,
+    MD, MA, MI, MN, MS, MO,
+    MT, NE, NV, NH, NJ, NM,
+    NY, NC, ND, MP, OH, OK,
+    OR, PW, PA, PR, RI, SC,
+    SD, TN, TX, UT, VT, VI,
+    VA, WA, WV, WI, WY
+  }
 
   struct Policy {
     uint id;
-    uint8 car_year;
+    uint16 car_year;
     bytes car_make;
     bytes car_model;
-    bytes state;  // CA, WA, LA, ...
-    uint8 initial_premium;  // stored in cents
-    uint8 initial_deductible;  // stored in cents
+    USAState state;  // CA, WA, LA, ...
+    int128 initial_premium;  // stored in cents
+    int128 initial_deductible;  // stored in cents
     // TODO: find how to register dates, probably in seconds since...
-    uint registered_at;
+    uint created_at;
   }
 
 
@@ -110,20 +122,21 @@ contract ethic_main {
    * Add a policy to a member (the sender)
    */
 
-  function add_policy(address addr, uint8 car_year, bytes car_make, bytes car_model, uint8 old_premium, uint8 old_deductible) {
+  function add_policy(address addr, uint16 car_year, bytes car_make, bytes car_model, int128 old_premium, int128 old_deductible) {
     var member = members[addr];
     // TODO: if (member.id != addr) throw;
     var member_policies = policies[addr];
-    var policy_id = member_policies.length;
+    member_policies.length++;
+    var policy_id = member_policies.length - 1;
     member_policies[policy_id] = Policy({
       id: policy_id,  // FIXME: maybe we want a more global ID ?
       car_year: car_year,
       car_make: car_make,
       car_model: car_model,
-      state: "CA",  // this is hardcoded for now
+      state: USAState.CA,  // hard coded for now
       initial_premium: old_premium,
       initial_deductible: old_deductible,
-      registered_at: block.timestamp
+      created_at: block.timestamp
     });
   }
 
