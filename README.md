@@ -50,11 +50,7 @@ To create the contract, you need to start geth with the following:
 ```bash
 $ ./bin/run.sh
 ```
-Copy-paste the builded javascript in `build/create_contract.js`. After contact is created, you get the contact address, that you can use to build another template `mongo_update.js` that will update the contract in database:
+Copy-paste the builded javascript in `build/create_contract.js`. After contact is created, you get the contact address, that you can use to build another template `contract.json` that will output the contract ABI and address in JSON:
 ```bash
-$ gulp mongo-contract -a <address>
-```
-And finally, to actually update the contract in MongoDB:
-```bash
-$ mongo ethic build/mongo_update.js
+$ gulp contract-json -a <address>
 ```

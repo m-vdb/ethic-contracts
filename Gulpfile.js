@@ -6,7 +6,7 @@ var argv = require('yargs').argv,
 
 var BUILD_DIR = './build/',
     CONFIG_DIR = './config/',
-    CONTRACT = 'contract.json',
+    CONTRACT = 'contract_data.json',
     MAIN_SOL = 'main.sol',
     ENV_FILE = CONFIG_DIR + 'env'
     ENV_FILE_TPL = ENV_FILE + '.tpl',
@@ -43,9 +43,9 @@ gulp.task('new-contract', ['build-contract'], function () {
     .pipe(gulp.dest(BUILD_DIR));
 });
 
-gulp.task('mongo-contract', ['build-contract'], function () {
+gulp.task('contract-json', ['build-contract'], function () {
   gulp.src(BUILD_DIR + CONTRACT)
-    .pipe(wrap({src: 'templates/mongo_update.js'}, {address: argv.a}))
-    .pipe(rename('mongo_update.js'))
+    .pipe(wrap({src: 'templates/contract.json'}, {address: argv.a}))
+    .pipe(rename('contract.json'))
     .pipe(gulp.dest(BUILD_DIR));
 });
