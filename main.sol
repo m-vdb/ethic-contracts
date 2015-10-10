@@ -6,31 +6,6 @@ contract ethic_main {
    */
 
   enum MemberState { Active, Inactive }
-  enum USAState {
-    AL, AK, AS, AZ, AR, CA,
-    CO, CT, DE, DC, FM, FL,
-    GA, GU, HI, ID, IL, IN,
-    IA, KS, KY, LA, ME, MH,
-    MD, MA, MI, MN, MS, MO,
-    MT, NE, NV, NH, NJ, NM,
-    NY, NC, ND, MP, OH, OK,
-    OR, PW, PA, PR, RI, SC,
-    SD, TN, TX, UT, VT, VI,
-    VA, WA, WV, WI, WY
-  }
-
-  struct Policy {
-    uint id;
-    uint16 car_year;
-    bytes car_make;
-    bytes car_model;
-    USAState state;  // CA, WA, LA, ...
-    int128 initial_premium;  // stored in cents
-    int128 initial_deductible;  // stored in cents
-    // TODO: find how to register dates, probably in seconds since...
-    uint created_at;
-  }
-
 
   struct Claim {
     uint id;
@@ -46,16 +21,14 @@ contract ethic_main {
 
 
   struct Member {
-  	// TODO: see how we manage the fact that the sender of the message
-  	// is not always the address we registered, maybe we should pass 
-  	// back logged_address all the time
     address id;
     // holds the state of the member: active/inactive
     MemberState state;
     uint created_at;
     uint amount_contributed;
+    uint8 policy_count;
     // this is how much token he has, token being our cryptocurrency
-    uint token_balance;
+    int token_balance;
   }
 
 
@@ -68,19 +41,10 @@ contract ethic_main {
 
   address[] members_addresses;  // FIXME: we need this because we cant iterate over mapping
   mapping (address => Member) public members;
-  mapping (address => Policy[]) public policies;
   // will hold the claims
   Claim[] claims_ledger;
-  // useful to count only active members when charging people
-  uint public nb_active_members;
-  uint nb_registered_policies;
 
-  // contructor
-  function ethic_main() public {
-    id_of_last_claim_settled = 0;
-    nb_active_members = 0;
-    nb_registered_policies = 0;
-  }
+  uint nb_registered_policies;
 
   /**
    *   The contract's functions.
@@ -95,12 +59,12 @@ contract ethic_main {
    * values.
    */
 
-  function create_member(address addr) {
+  function create_member(address addr, uint8 policy_count) {
     // TODO: if (members[addr].id == addr) throw;
-    members[addr] = Member(addr, MemberState.Active, block.timestamp, 0, 0);
+    members[addr] = Member(addr, MemberState.Active, block.timestamp, 0, policy_count, 0);
     members_addresses.length++;
     members_addresses[members_addresses.length - 1] = addr;
-    nb_active_members++;
+    nb_registered_policies += policy_count;
   }
 
 
@@ -110,34 +74,31 @@ contract ethic_main {
    */
 
   function deactivate_member(address addr) {
-    members[addr].state = MemberState.Inactive;
-    nb_active_members--;
-  }
-
-  function get_number_of_policies(address addr) constant returns (uint){
-    return policies[addr].length;
+    var member = members[addr];
+    member.state = MemberState.Inactive;
+    nb_registered_policies -= member.policy_count;
   }
 
   /**
-   * Add a policy to a member (the sender)
+   * Add a policy to a member
    */
 
-  function add_policy(address addr, uint16 car_year, bytes car_make, bytes car_model, int128 old_premium, int128 old_deductible) {
+  function add_policy(address addr) {
     var member = members[addr];
     // TODO: if (member.id != addr) throw;
-    var member_policies = policies[addr];
-    member_policies.length++;
-    var policy_id = member_policies.length - 1;
-    member_policies[policy_id] = Policy({
-      id: policy_id,  // FIXME: maybe we want a more global ID ?
-      car_year: car_year,
-      car_make: car_make,
-      car_model: car_model,
-      state: USAState.CA,  // hard coded for now
-      initial_premium: old_premium,
-      initial_deductible: old_deductible,
-      created_at: block.timestamp
-    });
+    member.policy_count++;
+    nb_registered_policies++;
+  }
+
+  /**
+   * Remove a policy from a member
+   */
+
+  function remove_policy(address addr) {
+    var member = members[addr];
+    // TODO: if (member.id != addr) throw;
+    member.policy_count--;
+    nb_registered_policies--;
   }
 
   /**
@@ -176,7 +137,7 @@ contract ethic_main {
     claims_ledger[claim_id].agreed_amount = agreed_amount;
     // we have to actually take the amount the auditor agreed on
     // not necessarily the amount initially claimed
-    send_tokens(msg.sender, agreed_amount);
+    send_tokens(msg.sender, int(agreed_amount));
   }
 
   /**
@@ -186,27 +147,19 @@ contract ethic_main {
    * and the amount to send
    */
 
-  // TODO: add policy type as argument
-  function send_tokens(address claimer, uint amount) {
-    // FIXME: define constant https://github.com/ethereum/wiki/wiki/Solidity-Tutorial#constants
-    var adjusted_amount = amount - 250;
-    // the token is in dollars, we will also do a simple verification so that
-    // if he has claimed more than once he only receives a part of the amount,
-    // and only a part of the amount is deducted from the organization's accounts
-    // -> @leo what did you mean?
-    members[claimer].token_balance += adjusted_amount;
+  function send_tokens(address claimer_addr, int amount) {
+    var claimer = members[claimer_addr];
+    claimer.token_balance += amount;
+    uint total_nb_policies = nb_registered_policies - claimer.policy_count;
 
     // each member of the DAO receives
     for (uint i = 0 ; i < members_addresses.length + 1 ; i++) {
       address member_address = members_addresses[i];
       Member contributor = members[member_address];
-      // TODO?: the filtering is made among the members that own the
-      // same type of policy (California, car, deductible 2500)
-      if (contributor.state == MemberState.Active && contributor.id != claimer){
-        // nb_active_members so we don't charge people who are waiting to be accepted into the DAO
-        // -> @leo: you assume here that if a member has two policies, he weighs twice a member that has one?
-        // nb_active_members - 1, 1 being the claimer
-        contributor.token_balance -= adjusted_amount / (nb_active_members - 1) * get_number_of_policies(contributor.id);
+      // we don't charge the claimer and the amount removed from the
+      // token balance is weighed with the number of policies of the member
+      if (contributor.state == MemberState.Active && contributor.id != claimer.id){
+        contributor.token_balance -= amount / int(total_nb_policies * contributor.policy_count);
       }
     }
   }
@@ -225,9 +178,10 @@ contract ethic_main {
     // we have to actually take the amount the auditor agreed on,
     // not necessarily the amount initially claimed
     while (address(this).balance > claims_ledger[i].agreed_amount && i < claims_ledger.length) {
-      claims_ledger[i].claimer.send(claims_ledger[i].agreed_amount);
+      var claim = claims_ledger[i];
+      award_claim(claims_ledger[i].claimer, claims_ledger[i].agreed_amount);
       i++;
-      // TODO: we want to set the "paid" attribute to true
+      claim.paid = true;
     }
   }
 
@@ -236,7 +190,7 @@ contract ethic_main {
    * when a member pays in ether the amount of his tokenbalance, it resets
    */
 
-  function reset_token_balance(address where_to_reset, uint by_how_much) {
+  function reset_token_balance(address where_to_reset, int by_how_much) {
     // FIXME: where_to_reset == msg.sender ? how do we call this method
     members[where_to_reset].token_balance -= by_how_much;
   }
