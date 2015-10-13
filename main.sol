@@ -135,9 +135,6 @@ contract ethic_main {
     // we set the value agreed by the auditor
     // which can differ downward from the claimed amount
     claims_ledger[claim_id].agreed_amount = agreed_amount;
-    // we have to actually take the amount the auditor agreed on
-    // not necessarily the amount initially claimed
-    send_tokens(msg.sender, int(agreed_amount));
   }
 
   /**
@@ -147,9 +144,10 @@ contract ethic_main {
    * and the amount to send
    */
 
-  function send_tokens(address claimer_addr, int amount) {
+  function send_tokens(address claimer_addr, uint _amount) {
     var claimer = members[claimer_addr];
-    claimer.token_balance += amount;
+    var amount = int(_amount);
+    claimer.token_balance += int(amount);
     uint total_nb_policies = nb_registered_policies - claimer.policy_count;
 
     // each member of the DAO receives
@@ -179,7 +177,7 @@ contract ethic_main {
     // not necessarily the amount initially claimed
     while (address(this).balance > claims_ledger[i].agreed_amount && i < claims_ledger.length) {
       var claim = claims_ledger[i];
-      award_claim(claims_ledger[i].claimer, claims_ledger[i].agreed_amount);
+      send_tokens(claims_ledger[i].claimer, claims_ledger[i].agreed_amount);
       i++;
       claim.paid = true;
     }
