@@ -11,12 +11,8 @@ contract ethic_main {
     uint id;
     address claimer;
     uint amount;  // stored in cents
-    // TODO: find how to register dates, probably in seconds since...
-    uint filed_at;
-    uint nb_of_validations;  // FIXME: what is it for?
-    bool awarded;
     bool paid;
-    uint agreed_amount;
+    uint received_at;
   }
 
 
@@ -104,37 +100,21 @@ contract ethic_main {
   /**
    * File a claim
    *
-   * Later this methode would take the policy
-   * as argument, for several policies (cars, home, etc...).
+   * We add the claim to the claim ledger. When the
+   * claim arrives here, it means that it was awarded,
+   * but not paid yet. We save the address of the claimer
+   * as well as the claim amount.
    */
 
-  function claim(uint amount_claimed) returns (uint) {
-
-    uint claim_id = claims_ledger.length;
-    claims_ledger[claim_id] = Claim({
+  function claim(address addr, uint claim_id, uint amount) {
+    claims_ledger.length++;
+    claims_ledger[claims_ledger.length - 1] = Claim({
       id: claim_id,
-      claimer: msg.sender,
-      amount: amount_claimed,
-      filed_at: block.timestamp,
-      nb_of_validations: 0,
-      awarded: false,
-      paid: false,
-      agreed_amount: 0
+      claimer: addr,
+      amount: amount,
+      received_at: block.timestamp,
+      paid: false
     });
-    return claim_id;
-  }
-
-  /**
-   * Award a claim
-   *
-   * This method takes as argument the claim id
-   * and the agreed amount.
-   */
-
-  function award_claim(uint claim_id, uint agreed_amount) {
-    // we set the value agreed by the auditor
-    // which can differ downward from the claimed amount
-    claims_ledger[claim_id].agreed_amount = agreed_amount;
   }
 
   /**
@@ -175,9 +155,9 @@ contract ethic_main {
     uint i = id_of_last_claim_settled + 1;
     // we have to actually take the amount the auditor agreed on,
     // not necessarily the amount initially claimed
-    while (address(this).balance > claims_ledger[i].agreed_amount && i < claims_ledger.length) {
+    while (address(this).balance > claims_ledger[i].amount && i < claims_ledger.length) {
       var claim = claims_ledger[i];
-      send_tokens(claims_ledger[i].claimer, claims_ledger[i].agreed_amount);
+      send_tokens(claims_ledger[i].claimer, claims_ledger[i].amount);
       i++;
       claim.paid = true;
     }
