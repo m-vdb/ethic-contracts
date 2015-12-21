@@ -7,20 +7,10 @@ var argv = require('yargs').argv,
 var BUILD_DIR = './build/',
     CONFIG_DIR = './config/',
     CONTRACT = 'contract_data.json',
-    MAIN_SOL = 'main.sol',
-    ENV_FILE = CONFIG_DIR + 'env'
-    ENV_FILE_TPL = ENV_FILE + '.tpl',
-    GENESIS_FILE = CONFIG_DIR + 'genesis.json',
-    GENESIS_FILE_TPL = GENESIS_FILE + '.tpl';
+    MAIN_SOL = 'main.sol';
 
 gulp.task('install', function () {
-  gulp.src(ENV_FILE_TPL)
-    .pipe(rename(ENV_FILE))
-    .pipe(gulp.dest('.'));
-  gulp.src(GENESIS_FILE_TPL)
-    .pipe(rename(GENESIS_FILE))
-    .pipe(gulp.dest('.'));
-  exec('touch ' + CONFIG_DIR + 'password');
+  exec('date +%s | shasum | base64 | head -c 32 > ' + CONFIG_DIR + 'password');
 });
 
 gulp.task('default', ['new-contract']);
