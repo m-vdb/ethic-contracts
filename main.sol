@@ -38,7 +38,7 @@ contract ethic_main {
   address[] members_addresses;  // FIXME: we need this because we cant iterate over mapping
   mapping (address => Member) public members;
   // will hold the claims
-  Claim[] claims_ledger;
+  Claim[] public claims_ledger;
 
   uint nb_registered_policies;
 
