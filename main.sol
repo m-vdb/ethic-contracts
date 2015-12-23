@@ -56,7 +56,6 @@ contract ethic_main {
    */
 
   function create_member(address addr, uint8 policy_count) {
-    // TODO: if (members[addr].id == addr) throw;
     members[addr] = Member(addr, MemberState.Active, block.timestamp, 0, policy_count, 0);
     members_addresses.length++;
     members_addresses[members_addresses.length - 1] = addr;
@@ -81,7 +80,6 @@ contract ethic_main {
 
   function add_policy(address addr) {
     var member = members[addr];
-    // TODO: if (member.id != addr) throw;
     member.policy_count++;
     nb_registered_policies++;
   }
