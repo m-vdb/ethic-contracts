@@ -16,7 +16,7 @@ RUN apt-get update
 RUN apt-get install -q -y geth
 
 # Working directory
-RUN mkdir -p /usr/src/app
+RUN mkdir -p /usr/src/app/logs
 WORKDIR /usr/src/app
 
 # Copy files
