@@ -4,7 +4,7 @@ DOCKER_ROOT_DIR=`pwd`
 popd > /dev/null
 GENESIS=$DOCKER_ROOT_DIR/genesis.json
 PASSWORD_FILE=$DOCKER_ROOT_DIR/password
-LOG_FILE=$DOCKER_ROOT_DIR/mining.log
+LOG_FILE=$DOCKER_ROOT_DIR/logs/mining.log
 RPCAPI="eth,personal,web3"
 
 # options
